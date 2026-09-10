@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Trabalho Prático 1 - Alinhamento Estratégico de Carteiras</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+  }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #1a202c;
+    line-height: 1.45;
+    font-size: 10.5pt;
+  }
+  h1 {
+    font-size: 16pt;
+    color: #1a365d;
+    border-bottom: 2px solid #2b6cb0;
+    padding-bottom: 4px;
+    margin-top: 0;
+    margin-bottom: 6px;
+  }
+  .header-info {
+    font-size: 9.5pt;
+    color: #4a5568;
+    margin-bottom: 14px;
+    background-color: #ebf8ff;
+    padding: 6px 10px;
+    border-left: 4px solid #3182ce;
+    border-radius: 2px;
+  }
+  h2 {
+    font-size: 12pt;
+    color: #2b6cb0;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 3px;
+    margin-top: 14px;
+    margin-bottom: 6px;
+  }
+  h3 {
+    font-size: 10.5pt;
+    color: #2d3748;
+    margin-top: 10px;
+    margin-bottom: 4px;
+  }
+  p {
+    margin-top: 3px;
+    margin-bottom: 6px;
+    text-align: justify;
+  }
+  ul, ol {
+    margin-top: 3px;
+    margin-bottom: 6px;
+    padding-left: 20px;
+  }
+  li {
+    margin-bottom: 2px;
+  }
+  code {
+    font-family: Consolas, 'Courier New', monospace;
+    background-color: #edf2f7;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 9pt;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    font-size: 9pt;
+  }
+  th, td {
+    border: 1px solid #cbd5e0;
+    padding: 5px 7px;
+    text-align: left;
+  }
+  th {
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    font-weight: 600;
+  }
+  tr:nth-child(even) {
+    background-color: #f7fafc;
+  }
+  .math-box {
+    background-color: #f7fafc;
+    border-left: 3px solid #4299e1;
+    padding: 6px 10px;
+    margin: 6px 0;
+    font-family: Consolas, monospace;
+    font-size: 9pt;
+  }
+</style>
+</head>
+<body>
+
+<h1>Trabalho Prático 1 – Alinhamento Estratégico de Carteiras</h1>
+<div class="header-info">
+  <strong>Disciplina:</strong> Projeto e Análise de Algoritmos &nbsp;|&nbsp; <strong>Docente:</strong> Prof. Douglas Castilho<br>
+  <strong>Instituição:</strong> IFSULDEMINAS – Campus Poços de Caldas &nbsp;|&nbsp; <strong>Curso:</strong> Engenharia de Computação (6º Período)
+</div>
+
+<h2>1. Descrição do Problema</h2>
+<p>
+No mercado financeiro, corretoras e casas de análise (<em>research houses</em>) publicam trimestralmente relatórios de alocação de ativos contendo listas ordenadas com tickers de ações da B3 (como PETR4, VALE3, ITUB4) recomendadas para compra, dispostas em ordem estrita de preferência e prioridade.
+</p>
+<p>
+Uma gestora de investimentos busca instituir a estratégia do <strong>"Núcleo de Consenso Ordenado"</strong> entre duas corretoras distintas (Corretora A e Corretora B). O objetivo é determinar a <strong>maior sequência de ações em comum que preserva rigorosamente a ordem relativa de recomendação em ambas as casas</strong>. Por exemplo, se a Corretora A recomenda comprar PETR4 antes de ITUB4 e a Corretora B também recomenda PETR4 antes de ITUB4 (mesmo havendo outros ativos intercalados), a sequência <code>[PETR4, ITUB4]</code> é válida.
+</p>
+<p>
+<strong>Entrada e Saída:</strong> A primeira linha da entrada contém dois inteiros <em>M</em> e <em>N</em> (1 &le; M, N &le; 1000), indicando respectivamente o número de ações da Corretora A e da Corretora B. As linhas seguintes contêm os códigos de ativos das corretoras A e B, respectivamente. A leitura pode ser feita via arquivo de texto ou da entrada padrão (<em>stdin</em>). Na saída, a primeira linha informa o inteiro <em>K</em> (quantidade máxima de ativos em consenso) e a segunda linha exibe os <em>K</em> tickers ordenados, separados por espaço. Caso não haja ativos em comum (<em>K = 0</em>), imprime-se <code>0</code> na primeira linha e uma linha em branco na segunda.
+</p>
+
+<h2>2. Modelagem da Solução e Referencial Teórico (CLRS)</h2>
+<p>
+O problema formulado mapeia-se de maneira direta e canônica no problema clássico da <strong>Maior Subsequência Comum (Longest Common Subsequence – LCS)</strong>, amplamente estudado no livro <em>Introduction to Algorithms</em> (CLRS – Cormen, Leiserson, Rivest e Stein).
+</p>
+<p>
+<strong>Por que LCS?</strong> Uma <em>subsequência</em> preserva a ordem relativa dos elementos sem a exigência de que sejam contíguos (ao contrário de uma substring). Como as corretoras podem intercalar ações distintas entre recomendações coincidentes, a carteira de consenso desejada é exatamente a maior subsequência comum entre as duas sequências de tickers.
+</p>
+<p>
+<strong>Por que Programação Dinâmica?</strong> Uma busca por força bruta (testando todas as 2<sup>min(M, N)</sup> subsequências) seria inviável. O problema satisfaz as duas propriedades essenciais da Programação Dinâmica:
+</p>
+<ul>
+  <li><strong>Subestrutura Ótima:</strong> Uma LCS ótima das sequências completas contém em seu interior a LCS ótima dos prefixos menores. Se os últimos ativos coincidem, ele integra a LCS final somando-se à solução dos prefixos restantes. Se diferem, a solução ótima é a melhor opção entre omitir o último ativo de A ou o último ativo de B.</li>
+  <li><strong>Subproblemas Sobrepostos:</strong> As escolhas recursivas geram chamadas repetidas sobre os mesmos prefixos de listas. A programação dinâmica resolve cada subproblema uma única vez por tabulação (<em>bottom-up</em>), armazenando os valores calculados em uma tabela bidimensional para acesso em tempo <em>O(1)</em>.</li>
+</ul>
+
+<h2>3. Explicação Detalhada do Algoritmo</h2>
+
+<h3>Significado de <code>dp[i][j]</code></h3>
+<p>
+Define-se uma matriz <code>dp</code> de dimensões <em>(M + 1) &times; (N + 1)</em>, onde cada elemento <code>dp[i][j]</code> representa o <strong>comprimento da maior subsequência comum</strong> considerando os primeiros <em>i</em> ativos da Corretora A e os primeiros <em>j</em> ativos da Corretora B.
+</p>
+
+<h3>Relação de Recorrência</h3>
+<div class="math-box">
+Casos Base:<br>
+dp[i][0] = 0,  para todo 0 &le; i &le; M<br>
+dp[0][j] = 0,  para todo 0 &le; j &le; N<br><br>
+Passo Indutivo (para 1 &le; i &le; M e 1 &le; j &le; N):<br>
+&bull; Se A[i - 1].equals(B[j - 1]):  dp[i][j] = dp[i - 1][j - 1] + 1<br>
+&bull; Se A[i - 1] diferente de B[j - 1]: dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+</div>
+
+<h3>Construção da Tabela e Reconstrução da Resposta</h3>
+<p>
+A tabela é preenchida iterativamente por dois laços <code>for</code> simples (<em>i</em> de 1 até <em>M</em>, e <em>j</em> de 1 até <em>N</em>). Ao término, o tamanho ótimo <em>K</em> é encontrado em <code>dp[M][N]</code>.
+</p>
+<p>
+A reconstrução da sequência de ações é realizada por <em>backtracking</em> partindo de <em>(M, N)</em> até a borda da matriz (<em>i = 0</em> ou <em>j = 0</em>):
+</p>
+<ol>
+  <li>Se <code>A[i - 1].equals(B[j - 1])</code>, o ativo compõe a solução: ele é guardado e recua-se pela diagonal (<code>i--</code> e <code>j--</code>).</li>
+  <li>Caso contrário, segue-se o caminho do valor máximo: se <code>dp[i - 1][j] &gt; dp[i][j - 1]</code>, recua-se para cima (<code>i--</code>); senão, recua-se para a esquerda (<code>j--</code>).</li>
+</ol>
+<p>
+Como o <em>backtracking</em> percorre a solução do final para o início, aloca-se um vetor de tamanho <em>K</em> e preenche-se de trás para frente (índice <em>K - 1</em> até 0), restaurando a ordem original de forma direta e sem inversões adicionais.
+</p>
+
+<h2>4. Análise de Complexidade Assintótica</h2>
+
+<h3>4.1. Complexidade de Tempo</h3>
+<ul>
+  <li><strong>Leitura da Entrada:</strong> Leitura de <em>M + N</em> tokens via <code>Scanner</code> em tempo linear &Theta;(M + N).</li>
+  <li><strong>Construção da Tabela DP:</strong> A matriz tem <em>(M + 1) &times; (N + 1)</em> células. Cada célula executa operações de comparação e indexação em tempo <em>O(1)</em>. Custo: &Theta;(M &times; N).</li>
+  <li><strong>Reconstrução da Resposta:</strong> O laço de retorno executa no máximo <em>M + N</em> passos, cada um com custo <em>O(1)</em>. Custo: <em>O(M + N)</em>.</li>
+  <li><strong>Impressão da Saída:</strong> Impressão de <em>K</em> ativos, onde <em>K &le; min(M, N)</em>. Custo: <em>O(K)</em>.</li>
+</ul>
+<p>
+<strong>Complexidade de Tempo Total:</strong> <code>O(M &times; N)</code>.<br>
+Para os limites do problema (<em>M, N &le; 1000</em>), <em>M &times; N &le; 10<sup>6</sup></em> operações, executadas em menos de 20 milissegundos na JVM.
+</p>
+
+<h3>4.2. Complexidade de Espaço</h3>
+<ul>
+  <li><strong>Vetores de Entrada:</strong> Armazenam os <em>M + N</em> tickers, ocupando <em>O(M + N)</em>.</li>
+  <li><strong>Tabela de DP:</strong> Matriz de inteiros de tamanho <em>(M + 1) &times; (N + 1)</em>. Para <em>M = 1000, N = 1000</em>, são aproximadamente 1 milhão de inteiros primitivos (~4 MB de memória), valor mínimo e perfeitamente gerenciável pela JVM. Custo: <code>O(M &times; N)</code>.</li>
+  <li><strong>Vetor de Resposta:</strong> Ocupa <em>O(K) &le; O(min(M, N))</em>.</li>
+</ul>
+<p>
+<strong>Complexidade de Espaço Total:</strong> <code>O(M &times; N)</code>.<br>
+<em>Justificativa:</em> A alocação da matriz completa é a abordagem clássica adotada no CLRS, mantendo a simplicidade e a legibilidade do algoritmo, permitindo uma reconstrução de resposta direta sem exigir algoritmos adicionais complexos.
+</p>
+
+<h2>5. Casos de Teste Executados</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Caso de Teste</th>
+      <th>Dimensões</th>
+      <th>Resultado (K)</th>
+      <th>Sequência Obtida</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Exemplo 1 (PDF)</strong></td>
+      <td>M=5, N=6</td>
+      <td>3</td>
+      <td>PETR4 ITUB4 ABEV3</td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Exemplo 2 (PDF - Disjuntos)</strong></td>
+      <td>M=4, N=4</td>
+      <td>0</td>
+      <td><em>(linha em branco)</em></td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Exemplo 3 (PDF - Empate)</strong></td>
+      <td>M=6, N=6</td>
+      <td>3</td>
+      <td>VALE3 BBDC4 WEGE3</td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Teste 1: Sem ativos em comum</strong></td>
+      <td>M=3, N=3</td>
+      <td>0</td>
+      <td><em>(linha em branco)</em></td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Teste 2: Apenas um comum</strong></td>
+      <td>M=4, N=3</td>
+      <td>1</td>
+      <td>ITUB4</td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Teste 3: Listas iguais</strong></td>
+      <td>M=5, N=5</td>
+      <td>5</td>
+      <td>PETR4 VALE3 ITUB4 BBDC4 WEGE3</td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Teste 4: Tamanhos diferentes</strong></td>
+      <td>M=2, N=7</td>
+      <td>2</td>
+      <td>PETR4 WEGE3</td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Teste 5: Vários intercalados</strong></td>
+      <td>M=8, N=8</td>
+      <td>7</td>
+      <td>VALE3 ITUB4 BBDC4 ABEV3 WEGE3 RENT3 MGLU3</td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Teste 6: Ordem invertida</strong></td>
+      <td>M=4, N=4</td>
+      <td>1</td>
+      <td>BBDC4</td>
+      <td>Sucesso</td>
+    </tr>
+    <tr>
+      <td><strong>Teste 7: Limite Superior</strong></td>
+      <td>M=1000, N=1000</td>
+      <td>500</td>
+      <td>500 tickers intercalados (Tempo &lt; 200 ms)</td>
+      <td>Sucesso</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>6. Descrição do Uso de Inteligência Artificial</h2>
+<p>
+Em conformidade com as exigências do Trabalho Prático 1 e com os princípios de integridade acadêmica, relata-se o uso de Inteligência Artificial como assistente de desenvolvimento:
+</p>
+<ul>
+  <li><strong>Ferramenta:</strong> Agente de IA Antigravity (Google DeepMind).</li>
+  <li><strong>Modelagem Teórica:</strong> Auxílio na correlação dos conceitos do problema com o referencial do CLRS (subestrutura ótima e subproblemas sobrepostos em LCS).</li>
+  <li><strong>Implementação:</strong> Auxílio na escrita de código Java limpo, simples e estruturado, utilizando estruturas básicas (arrays, tipos primitivos, laços for/while) apropriadas para a graduação.</li>
+  <li><strong>Tratamento de Robustez:</strong> Identificação e tratamento do caractere BOM (Byte Order Mark) na leitura de arquivos UTF-8 no Windows.</li>
+  <li><strong>Verificação e Testes:</strong> Criação de casos de teste de cobertura e validação dos limites do enunciado.</li>
+</ul>
+
+</body>
+</html>
