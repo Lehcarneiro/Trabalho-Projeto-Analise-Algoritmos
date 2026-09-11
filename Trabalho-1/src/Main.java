@@ -1,63 +1,92 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+
+    static String[] corretoraA;
+    static String[] corretoraB;
+
+    static ArrayList<String> melhor = new ArrayList<>();
+
+    public static void buscar(int ultimaPosicaoA, int ultimaPosicaoB,
+                              ArrayList<String> atual) {
+
+        boolean encontrouProximo = false;
+
+        for (int i = ultimaPosicaoA + 1; i < corretoraA.length; i++) {
+
+            for (int j = ultimaPosicaoB + 1; j < corretoraB.length; j++) {
+
+                if (corretoraA[i].equals(corretoraB[j])) {
+
+                    encontrouProximo = true;
+
+                    atual.add(corretoraA[i]);
+
+                    buscar(i, j, atual);
+
+                    atual.remove(atual.size() - 1);
+                }
+            }
+        }
+
+        if (!encontrouProximo && atual.size() > melhor.size()) {
+            melhor = new ArrayList<>(atual);
+        }
+    }
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
 
-        String[] corretoraA;
-        String[] corretoraB;
-        int M;
-        int N;
-        int posicaoA = 0;
-        int posicaoB = 0;
-        int ultimaPosicaoA = -1;
-        int ultimaPosicaoB = -1;
-
         System.out.println("Digite o tamanho do primeiro vetor");
-        M = scanner.nextInt();
-
+        int M = scanner.nextInt();
 
         System.out.println("Digite o tamanho do segundo vetor");
-        N = scanner.nextInt();
+        int N = scanner.nextInt();
 
         corretoraA = new String[M];
         corretoraB = new String[N];
 
         System.out.println("Digite a primeira coluna dos tickers de ações da B3");
 
-        for(int i=0; i < M; i++){
+        for (int i = 0; i < M; i++) {
             corretoraA[i] = scanner.next();
         }
 
         System.out.println("Digite a segunda coluna dos tickers de ações da B3");
 
-        for(int i=0; i < M; i++){
+        for (int i = 0; i < N; i++) {
             corretoraB[i] = scanner.next();
         }
 
+        System.out.println("Primeira corretora:");
+
         for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-
-        if (corretoraA[i].equals(corretoraB[j])) {
-                posicaoA = i;
-                posicaoB = j;
-
-            for (int proximoTickerA = ultimaPosicaoA + 1; proximoTickerA < M; proximoTickerA++) {
-
-                for (int proximoTickerB = ultimaPosicaoB + 1; proximoTickerB < N; proximoTickerB++) {
-
-                    if (corretoraA[proximoTickerA].equals(corretoraB[proximoTickerB])) {
-
-                        System.out.println("Próximo: " + corretoraA[proximoTickerA]);
-                        System.out.println("A: " + proximoTickerA);
-                        System.out.println("B: " + proximoTickerB);
-                            }
-                        }
-                    }
-                }
-            }
+            System.out.println(corretoraA[i]);
         }
+
+        System.out.println("Segunda corretora:");
+
+        for (int i = 0; i < N; i++) {
+            System.out.println(corretoraB[i]);
+        }
+
+        ArrayList<String> atual = new ArrayList<>();
+
+
+        buscar(-1, -1, atual);
+
+        System.out.println("Maior subsequência encontrada:");
+        System.out.println();
+
+
+        System.out.println(melhor.size());
+
+        for (String ticker : melhor) {
+            System.out.print(ticker + " ");
+        }
+
+
     }
 }
