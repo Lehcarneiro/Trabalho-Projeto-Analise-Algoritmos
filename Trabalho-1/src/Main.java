@@ -87,6 +87,7 @@ public class Main {
             System.out.print(ticker + " ");
         }
 
+        //O(M × N × 2^N)
 
     }
 }
