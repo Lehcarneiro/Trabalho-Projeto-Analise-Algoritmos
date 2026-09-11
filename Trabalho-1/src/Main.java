@@ -23,9 +23,9 @@ public class Main {
 
                     atual.add(corretoraA[i]);
 
-                    buscar(i, j, atual);
+                    buscar(i, j, atual); //Para garantir sequencia e manter a ordem 
 
-                    atual.remove(atual.size() - 1);
+                    atual.remove(atual.size() - 1); //remove um elemento e tenta outra possibilidade
                 }
             }
         }
@@ -58,16 +58,6 @@ public class Main {
 
         for (int i = 0; i < N; i++) {
             corretoraB[i] = scanner.next();
-        }
-
-
-        for (int i = 0; i < M; i++) {
-            System.out.println(corretoraA[i]);
-        }
-
-
-        for (int i = 0; i < N; i++) {
-            System.out.println(corretoraB[i]);
         }
 
         ArrayList<String> atual = new ArrayList<>();
