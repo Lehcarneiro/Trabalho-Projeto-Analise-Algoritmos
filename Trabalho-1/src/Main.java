@@ -60,13 +60,11 @@ public class Main {
             corretoraB[i] = scanner.next();
         }
 
-        System.out.println("Primeira corretora:");
 
         for (int i = 0; i < M; i++) {
             System.out.println(corretoraA[i]);
         }
 
-        System.out.println("Segunda corretora:");
 
         for (int i = 0; i < N; i++) {
             System.out.println(corretoraB[i]);
