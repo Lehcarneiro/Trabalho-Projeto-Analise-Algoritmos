@@ -30,7 +30,7 @@ public class Main {
             }
         }
 
-        if (!encontrouProximo && atual.size() > melhor.size()) {
+        if (!encontrouProximo && atual.size() > melhor.size()) {  //Se atual maior que a melhor sequência, a sequencia atual passa a ser a melhor
             melhor = new ArrayList<>(atual);
         }
     }
@@ -76,7 +76,6 @@ public class Main {
         buscar(-1, -1, atual);
 
         System.out.println("Maior subsequência encontrada:");
-        System.out.println();
 
 
         System.out.println(melhor.size());
